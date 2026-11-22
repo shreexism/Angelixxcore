@@ -7,13 +7,13 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&display=swap');
 :root{
-  --bg:#fff0f5; --panel:#ffe4ee; --line:#f4bcd1;
-  --lcd:#d9608f; --lcd-dim:#e59ab9; --paper:#8a3358; --red:#ff7aa8;
+  --bg:#0a0d0a; --panel:#12160f; --line:#2c352a;
+  --lcd:#a6ff4d; --lcd-dim:#5c8f3a; --paper:#e7f0df; --red:#ff5b4d;
 }
 *{ box-sizing:border-box; }
 body{
   margin:0; min-height:100vh;
-  background:radial-gradient(circle at 50% 0%, #fffafc 0%, var(--bg) 60%);
+  background:radial-gradient(circle at 50% 0%, #151b12 0%, var(--bg) 60%);
   color:var(--paper);
   font-family:'Space Mono', monospace;
   display:flex; justify-content:center;
@@ -28,7 +28,7 @@ body{
 }
 .topbar .brand{
   font-family:'VT323', monospace; font-size:28px; color:var(--lcd);
-  letter-spacing:.04em; text-shadow:0 0 8px rgba(217,96,143,.25);
+  letter-spacing:.04em; text-shadow:0 0 8px rgba(166,255,77,.35);
 }
 .rec{ display:flex; align-items:center; gap:6px; }
 .rec .dot{
@@ -45,8 +45,8 @@ body{
 .screen{
   position:relative; aspect-ratio:4/3;
   background:
-    repeating-linear-gradient(0deg, rgba(217,96,143,.07) 0px, rgba(217,96,143,.07) 1px, transparent 1px, transparent 3px),
-    #ffeef4;
+    repeating-linear-gradient(0deg, rgba(166,255,77,.03) 0px, rgba(166,255,77,.03) 1px, transparent 1px, transparent 3px),
+    #060a05;
   border-radius:2px; overflow:hidden;
   display:flex; align-items:center; justify-content:center;
 }
@@ -57,7 +57,7 @@ canvas{ max-width:100%; max-height:100%; display:block; }
 }
 .empty-state .icon{ font-size:40px; display:block; margin-bottom:6px; opacity:.6; }
 
-.bracket{ position:absolute; width:18px; height:18px; border-color:var(--lcd); opacity:.8; }
+.bracket{ position:absolute; width:18px; height:18px; border-color:var(--lcd); opacity:.7; }
 .bracket.tl{ top:6px; left:6px; border-top:2px solid; border-left:2px solid; }
 .bracket.tr{ top:6px; right:6px; border-top:2px solid; border-right:2px solid; }
 .bracket.bl{ bottom:6px; left:6px; border-bottom:2px solid; border-left:2px solid; }
@@ -65,14 +65,14 @@ canvas{ max-width:100%; max-height:100%; display:block; }
 
 .hud{
   position:absolute; inset:0; pointer-events:none;
-  font-family:'VT323', monospace; color:#fff;
-  text-shadow:0 0 4px rgba(217,96,143,.95), 0 0 2px rgba(217,96,143,.9);
+  font-family:'VT323', monospace; color:var(--lcd);
+  text-shadow:0 0 4px rgba(166,255,77,.6);
 }
 .hud .stamp{ position:absolute; bottom:8px; left:14px; font-size:16px; letter-spacing:.03em; }
 .hud .battery{ position:absolute; top:8px; right:12px; font-size:15px; display:flex; align-items:center; gap:5px; }
 .hud .modeName{ position:absolute; top:8px; left:12px; font-size:15px; }
 .batt-icon{ display:flex; align-items:center; gap:1px; }
-.batt-bar{ width:3px; height:8px; background:#fff; box-shadow:0 0 3px rgba(217,96,143,.95); }
+.batt-bar{ width:3px; height:8px; background:var(--lcd); }
 
 .filename{
   text-align:center; font-size:11px; color:var(--lcd-dim);
@@ -92,7 +92,7 @@ button, .file-btn label{
   transition:border-color .15s, color .15s;
 }
 button:hover, .file-btn label:hover{ border-color:var(--lcd); color:var(--lcd); }
-button:disabled{ opacity:.45; cursor:not-allowed; }
+button:disabled{ opacity:.35; cursor:not-allowed; }
 
 .dial-label{ font-size:11px; color:var(--lcd-dim); letter-spacing:.14em; margin:22px 0 8px 2px; }
 .dial{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
@@ -101,11 +101,11 @@ button:disabled{ opacity:.45; cursor:not-allowed; }
   display:block; font-family:'VT323', monospace;
   font-size:17px; color:var(--lcd-dim); margin-bottom:2px;
 }
-.dial button.active{ border-color:var(--lcd); color:var(--lcd); background:#ffd6e5; }
+.dial button.active{ border-color:var(--lcd); color:var(--lcd); background:#101a0c; }
 .dial button.active .num{ color:var(--lcd); }
 
 .footer-note{
-  text-align:center; font-size:10px; color:var(--lcd-dim);
+  text-align:center; font-size:10px; color:var(--line);
   margin-top:22px; letter-spacing:.08em;
 }
 </style>
@@ -135,3 +135,350 @@ button:disabled{ opacity:.45; cursor:not-allowed; }
         <div class="modeName" id="modeName">ORIGINAL</div>
         <div class="battery">
           <span class="batt-icon">
+            <span class="batt-bar"></span><span class="batt-bar"></span><span class="batt-bar"></span>
+          </span>
+          98%
+        </div>
+        <div class="stamp" id="stamp">'99 12·25 14:32</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filename" id="filename">&nbsp;</div>
+
+  <div class="upload-row">
+    <div class="file-btn">
+      <button id="loadBtn" type="button">▣ LOAD PHOTO</button>
+      <input type="file" id="upload" accept="image/*">
+    </div>
+    <button id="downloadBtn" disabled>⬇ SAVE</button>
+  </div>
+
+  <div class="dial-label">FILTER DIAL — select a mode</div>
+  <div class="dial" id="dial"></div>
+
+  <div class="footer-note">DIGICAM FILTER · v1.2</div>
+
+</div>
+
+<script>
+/* ---------- effect helpers ---------- */
+function addNoise(ctx, w, h, amt){
+  const d = ctx.getImageData(0, 0, w, h), p = d.data;
+  for(let i = 0; i < p.length; i += 4){
+    const n = (Math.random() - .5) * amt;
+    p[i] += n; p[i+1] += n; p[i+2] += n;
+  }
+  ctx.putImageData(d, 0, 0);
+}
+function addVignette(ctx, w, h, strength){
+  const g = ctx.createRadialGradient(w/2, h/2, Math.min(w,h)*.3, w/2, h/2, Math.max(w,h)*.75);
+  g.addColorStop(0, 'rgba(0,0,0,0)');
+  g.addColorStop(1, `rgba(0,0,0,${strength})`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+}
+function shiftChannels(ctx, w, h, dx){
+  const d = ctx.getImageData(0, 0, w, h);
+  const p = d.data, s = new Uint8ClampedArray(p);
+  for(let y = 0; y < h; y++){
+    for(let x = 0; x < w; x++){
+      const i = (y*w + x) * 4;
+      const r = (y*w + Math.min(w-1, x+dx)) * 4;
+      const b = (y*w + Math.max(0, x-dx)) * 4;
+      p[i] = s[r];
+      p[i+2] = s[b+2];
+    }
+  }
+  ctx.putImageData(d, 0, 0);
+}
+function addScanlines(ctx, w, h, alpha){
+  const step = Math.max(3, Math.round(h / 200));
+  ctx.fillStyle = `rgba(0,0,0,${alpha})`;
+  for(let y = 0; y < h; y += step) ctx.fillRect(0, y, w, 1 + Math.floor(step/3));
+}
+function overlay(ctx, w, h, mode, makeGradient){
+  ctx.globalCompositeOperation = mode;
+  ctx.fillStyle = makeGradient(ctx, w, h);
+  ctx.fillRect(0, 0, w, h);
+  ctx.globalCompositeOperation = 'source-over';
+}
+function softRes(ctx, w, h, targetW){
+  if(w <= targetW) return;
+  const th = Math.round(targetW * h / w);
+  const t = document.createElement('canvas');
+  t.width = targetW; t.height = th;
+  t.getContext('2d').drawImage(ctx.canvas, 0, 0, targetW, th);
+  ctx.imageSmoothingEnabled = true;
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(t, 0, 0, targetW, th, 0, 0, w, h);
+}
+
+function laceHeart(ctx, x, y, s, k){
+  ctx.beginPath();
+  ctx.moveTo(x, y + k*s*.55);
+  ctx.bezierCurveTo(x - s*.9, y - k*s*.05, x - s*.55, y - k*s*.65, x, y - k*s*.2);
+  ctx.bezierCurveTo(x + s*.55, y - k*s*.65, x + s*.9, y - k*s*.05, x, y + k*s*.55);
+  ctx.closePath();
+  ctx.fill();
+}
+function drawLaceBorder(ctx, w, h){
+  const bh = Math.min(w, h) * .05; // thin
+  const sides = [
+    { L:w, t:[1,0,0,1,0,0],   pos:(u,v)=>[u, v] },     // top
+    { L:w, t:[1,0,0,-1,0,h],  pos:(u,v)=>[u, h-v] },   // bottom
+    { L:h, t:[0,1,1,0,0,0],   pos:(u,v)=>[v, u] },     // left
+    { L:h, t:[0,1,-1,0,w,0],  pos:(u,v)=>[w-v, u] }    // right
+  ];
+  sides.forEach(({L, t, pos}) => {
+    const n = Math.max(6, Math.round(L/(bh*1.4)));
+    const step = L/n, r = step/2;
+    ctx.save();
+    ctx.setTransform(t[0], t[1], t[2], t[3], t[4], t[5]);
+    ctx.shadowColor = 'rgba(214,110,150,.4)';
+    ctx.shadowBlur = Math.max(1, bh*.15);
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.rect(0, 0, L, bh);
+    for(let i = 0; i < n; i++){
+      const cx = step*(i + .5);
+      ctx.moveTo(cx + r, bh);
+      ctx.arc(cx, bh, r, 0, Math.PI);
+      ctx.closePath();
+    }
+    ctx.fill();
+    ctx.restore();
+    ctx.fillStyle = '#f4b8cc';
+    for(let i = 0; i < n; i++){
+      const u = step*(i + .5);
+      if(u < bh*1.5 || u > L - bh*1.5) continue; // keep corners clean
+      const [hx, hy] = pos(u, bh*.42);
+      laceHeart(ctx, hx, hy, bh*.28, 1);
+      const [dx, dy] = pos(u, bh + r*.4);
+      ctx.beginPath();
+      ctx.arc(dx, dy, Math.max(.7, r*.13), 0, Math.PI*2);
+      ctx.fill();
+    }
+  });
+}
+
+/* ---------- filters ---------- */
+const filters = [
+  { name:"Original", css:"none" },
+  { name:"CCD",      css:"contrast(1.2) saturate(1.1) brightness(1.05)" },
+  { name:"Y2K",      css:"contrast(1.3) saturate(1.4) hue-rotate(-10deg)" },
+  { name:"Vintage",  css:"sepia(0.45) contrast(1.1) brightness(1.05)" },
+  { name:"Film",     css:"contrast(1.25) saturate(0.9)" },
+  { name:"Warm",     css:"sepia(0.25) saturate(1.4)" },
+  { name:"Cool",     css:"hue-rotate(20deg) saturate(1.2)" },
+  { name:"Dream",    css:"brightness(1.1) contrast(0.9) blur(1px)" },
+  { name:"Soft",     css:"brightness(1.08) saturate(0.95)" },
+  { name:"Flash",    css:"brightness(1.3) contrast(1.4)" },
+  { name:"B & W",    css:"grayscale(100%) contrast(1.2)" },
+
+  /* new */
+  { name:"VHS", css:"saturate(1.3) contrast(1.1) blur(0.6px)",
+    fx:(ctx,w,h)=>{
+      shiftChannels(ctx, w, h, Math.max(2, Math.round(w*.006)));
+      addScanlines(ctx, w, h, .22);
+      addNoise(ctx, w, h, 26);
+    }},
+  { name:"Grain", css:"contrast(1.1) saturate(0.85)",
+    fx:(ctx,w,h)=>{
+      addNoise(ctx, w, h, 55);
+      addVignette(ctx, w, h, .25);
+    }},
+  { name:"Disposable", css:"sepia(0.2) saturate(1.3) contrast(1.15) brightness(1.08)",
+    fx:(ctx,w,h)=>{
+      addVignette(ctx, w, h, .55);
+      addNoise(ctx, w, h, 30);
+    }},
+  { name:"Glitch", css:"contrast(1.15) saturate(1.2)",
+    fx:(ctx,w,h)=>{
+      const t = document.createElement('canvas');
+      t.width = w; t.height = h;
+      t.getContext('2d').drawImage(ctx.canvas, 0, 0);
+      for(let i = 0; i < 9; i++){
+        const y = Math.random()*h;
+        const sh = h * (.015 + Math.random()*.06);
+        const off = (Math.random() - .5) * w * .14;
+        ctx.drawImage(t, 0, y, w, sh, off, y, w, sh);
+      }
+      shiftChannels(ctx, w, h, Math.max(3, Math.round(w*.01)));
+    }},
+  { name:"Vapor", css:"contrast(1.1) saturate(1.5) hue-rotate(-20deg)",
+    fx:(ctx,w,h)=>{
+      overlay(ctx, w, h, 'overlay', (c,w,h)=>{
+        const g = c.createLinearGradient(0, 0, 0, h);
+        g.addColorStop(0, 'rgba(255,70,200,.6)');
+        g.addColorStop(1, 'rgba(0,220,255,.6)');
+        return g;
+      });
+    }},
+  { name:"Light leak", css:"sepia(0.2) saturate(1.3) brightness(1.05)",
+    fx:(ctx,w,h)=>{
+      overlay(ctx, w, h, 'screen', (c,w,h)=>{
+        const g = c.createRadialGradient(w*.95, h*.05, 0, w*.95, h*.05, Math.max(w,h)*.7);
+        g.addColorStop(0, 'rgba(255,130,40,.85)');
+        g.addColorStop(.5, 'rgba(255,70,60,.3)');
+        g.addColorStop(1, 'rgba(255,70,60,0)');
+        return g;
+      });
+    }},
+  { name:"Game Boy", css:"grayscale(1) contrast(1.2) brightness(0.95)",
+    fx:(ctx,w,h)=>{
+      const sw = 256, sh = Math.max(1, Math.round(sw*h/w));
+      const t = document.createElement('canvas');
+      t.width = sw; t.height = sh;
+      const tc = t.getContext('2d');
+      tc.drawImage(ctx.canvas, 0, 0, sw, sh);
+      const d = tc.getImageData(0, 0, sw, sh), p = d.data;
+      // palette: rose pink, baby pink, pale pink, white
+      const pal = [[222,120,158],[244,184,204],[251,221,231],[255,255,255]];
+      const bayer = [0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+      for(let i = 0; i < p.length; i += 4){
+        const px = (i/4) % sw, py = Math.floor((i/4) / sw);
+        let l = (.3*p[i] + .59*p[i+1] + .11*p[i+2]) / 255;
+        l += (bayer[(py%4)*4 + (px%4)]/16 - .5) * .1; // light pixel dither
+        const c = l < .22 ? pal[0] : l < .5 ? pal[1] : l < .78 ? pal[2] : pal[3];
+        p[i] = c[0]; p[i+1] = c[1]; p[i+2] = c[2];
+      }
+      tc.putImageData(d, 0, 0);
+      drawLaceBorder(tc, sw, sh); // thin white lace border, all 4 sides
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(t, 0, 0, sw, sh, 0, 0, w, h);
+    }},
+
+  /* named looks */
+  { name:"iPhone 3GS", css:"saturate(1.1) contrast(0.95) brightness(1.05) sepia(0.12)",
+    fx:(ctx,w,h)=>{
+      softRes(ctx, w, h, 1000);
+      overlay(ctx, w, h, 'soft-light', ()=>'rgba(200,210,90,.18)');
+      addVignette(ctx, w, h, .22);
+      addNoise(ctx, w, h, 18);
+    }},
+  { name:"Kodak", css:"sepia(0.18) saturate(1.35) contrast(1.12) brightness(1.04) hue-rotate(-6deg)",
+    fx:(ctx,w,h)=>{
+      overlay(ctx, w, h, 'soft-light', ()=>'rgba(255,180,60,.22)');
+      addVignette(ctx, w, h, .2);
+      addNoise(ctx, w, h, 22);
+    }},
+  { name:"Fuji", css:"saturate(1.25) contrast(1.1) hue-rotate(8deg) brightness(1.03)",
+    fx:(ctx,w,h)=>{
+      overlay(ctx, w, h, 'soft-light', ()=>'rgba(0,200,160,.2)');
+      addNoise(ctx, w, h, 20);
+    }},
+  { name:"Cherry 2009", css:"saturate(1.3) contrast(1.15) brightness(1.1) hue-rotate(-12deg)",
+    fx:(ctx,w,h)=>{
+      overlay(ctx, w, h, 'soft-light', ()=>'rgba(220,30,70,.35)');
+      addVignette(ctx, w, h, .3);
+      addNoise(ctx, w, h, 20);
+    }},
+  { name:"Prime 2016", css:"contrast(0.9) saturate(0.85) brightness(1.08) sepia(0.1)",
+    fx:(ctx,w,h)=>{
+      overlay(ctx, w, h, 'lighten', ()=>'rgb(38,34,48)');
+      overlay(ctx, w, h, 'soft-light', ()=>'rgba(255,170,110,.15)');
+    }},
+  { name:"Pink 2020", css:"brightness(1.12) contrast(0.95) saturate(1.2) hue-rotate(-8deg)",
+    fx:(ctx,w,h)=>{
+      overlay(ctx, w, h, 'soft-light', ()=>'rgba(255,140,190,.45)');
+      overlay(ctx, w, h, 'screen', ()=>'rgba(255,170,210,.12)');
+    }}
+];
+
+/* ---------- app ---------- */
+const MAX_SIDE = 2048; // keeps pixel effects fast on big phone photos
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { willReadFrequently:true });
+const emptyState = document.getElementById('emptyState');
+const hud = document.getElementById('hud');
+const modeName = document.getElementById('modeName');
+const stampEl = document.getElementById('stamp');
+const filenameEl = document.getElementById('filename');
+const downloadBtn = document.getElementById('downloadBtn');
+const dial = document.getElementById('dial');
+
+let img = new Image();
+let hasImage = false;
+let activeFilter = filters[0];
+
+function randomStamp(){
+  const yr = 96 + Math.floor(Math.random()*4);
+  const mo = String(1 + Math.floor(Math.random()*12)).padStart(2,'0');
+  const day = String(1 + Math.floor(Math.random()*28)).padStart(2,'0');
+  const hh = String(Math.floor(Math.random()*24)).padStart(2,'0');
+  const mm = String(Math.floor(Math.random()*60)).padStart(2,'0');
+  return `'${yr} ${mo}·${day} ${hh}:${mm}`;
+}
+
+function render(){
+  if(!hasImage) return;
+  const scale = Math.min(1, MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+  const w = Math.round(img.naturalWidth * scale);
+  const h = Math.round(img.naturalHeight * scale);
+  canvas.width = w;
+  canvas.height = h;
+  ctx.clearRect(0, 0, w, h);
+  ctx.filter = activeFilter.css;
+  ctx.drawImage(img, 0, 0, w, h);
+  ctx.filter = 'none';
+  if(activeFilter.fx) activeFilter.fx(ctx, w, h);
+}
+
+document.getElementById('loadBtn').onclick = () => {
+  const input = document.getElementById('upload');
+  input.value = ''; // lets you pick the same photo again
+  input.click();
+};
+
+document.getElementById('upload').onchange = (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const url = URL.createObjectURL(file);
+  img.onload = () => {
+    hasImage = true;
+    emptyState.style.display = 'none';
+    canvas.style.display = 'block';
+    hud.style.display = 'block';
+    downloadBtn.disabled = false;
+    stampEl.textContent = randomStamp();
+    filenameEl.textContent = file.name;
+    try{
+      render();
+    }catch(err){
+      filenameEl.textContent = 'RENDER ERROR: ' + err.message;
+    }
+  };
+  img.onerror = () => {
+    hasImage = false;
+    filenameEl.textContent = 'CANNOT READ THIS FILE (try a JPG or PNG)';
+  };
+  img.src = url;
+};
+
+filters.forEach((f, i) => {
+  const btn = document.createElement('button');
+  btn.innerHTML = `<span class="num">${String(i).padStart(2,'0')}</span>${f.name}`;
+  if(i === 0) btn.classList.add('active');
+  btn.onclick = () => {
+    dial.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = f;
+    modeName.textContent = f.name.toUpperCase();
+    render();
+  };
+  dial.appendChild(btn);
+});
+
+downloadBtn.onclick = () => {
+  if(!hasImage) return;
+  const link = document.createElement('a');
+  link.download = `digicam-${activeFilter.name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+};
+</script>
+</body>
+</html>
